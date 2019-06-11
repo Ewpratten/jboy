@@ -168,7 +168,7 @@ public class Z80{
         () { r.sp=mmu.rw(r.pc); r.pc+=2; r.m=3; }
 
         public void LDHLmm
-        () { int i=mmu.rw(r.pc); r.pc+=2; r.l=mmu.rb((i) != 0); r.h=mmu.rb(i+1); r.m=5; } public void LDmmHL
+        () { int i=mmu.rw(r.pc); r.pc+=2; r.l=mmu.rb((i)); r.h=mmu.rb(i+1); r.m=5; } public void LDmmHL
         () { int i=mmu.rw(r.pc); r.pc+=2; mmu.ww(i,(r.h<<8)+r.l); r.m=5; }
 
         public void LDHLIA
@@ -215,15 +215,15 @@ public class Z80{
         () { int i=mmu.rb(r.pc); if(i>127) i=-((~i+1)&255); r.pc++; r.sp+=i; r.m=4; }
 
         public void ADCr_b
-        () { int a=r.a; r.a+=r.b; r.a+=((((r.f&0x10) != 0)) != 0)?1:0; r.f=(r.a>255)?0x10:0; r.a&=255; if(r.a == 0) r.f|=0x80; if(((r.a^r.b^a)&0x10) != 0) r.f|=0x20; r.m=1; } public void ADCr_c
-        () { int a=r.a; r.a+=r.c; r.a+=((((r.f&0x10) != 0)) != 0)?1:0; r.f=(r.a>255)?0x10:0; r.a&=255; if(r.a == 0) r.f|=0x80; if(((r.a^r.c^a)&0x10) != 0) r.f|=0x20; r.m=1; } public void ADCr_d
-        () { int a=r.a; r.a+=r.d; r.a+=((((r.f&0x10) != 0)) != 0)?1:0; r.f=(r.a>255)?0x10:0; r.a&=255; if(r.a == 0) r.f|=0x80; if(((r.a^r.d^a)&0x10) != 0) r.f|=0x20; r.m=1; } public void ADCr_e
-        () { int a=r.a; r.a+=r.e; r.a+=((((r.f&0x10) != 0)) != 0)?1:0; r.f=(r.a>255)?0x10:0; r.a&=255; if(r.a == 0) r.f|=0x80; if(((r.a^r.e^a)&0x10) != 0) r.f|=0x20; r.m=1; } public void ADCr_h
-        () { int a=r.a; r.a+=r.h; r.a+=((((r.f&0x10) != 0)) != 0)?1:0; r.f=(r.a>255)?0x10:0; r.a&=255; if(r.a == 0) r.f|=0x80; if(((r.a^r.h^a)&0x10) != 0) r.f|=0x20; r.m=1; } public void ADCr_l
-        () { int a=r.a; r.a+=r.l; r.a+=((((r.f&0x10) != 0)) != 0)?1:0; r.f=(r.a>255)?0x10:0; r.a&=255; if(r.a == 0) r.f|=0x80; if(((r.a^r.l^a)&0x10) != 0) r.f|=0x20; r.m=1; } public void ADCr_a
-        () { int a=r.a; r.a+=r.a; r.a+=((((r.f&0x10) != 0)) != 0)?1:0; r.f=(r.a>255)?0x10:0; r.a&=255; if(r.a == 0) r.f|=0x80; if(((r.a^r.a^a)&0x10) != 0) r.f|=0x20; r.m=1; } public void ADCHL
-        () { int a=r.a; int m=mmu.rb((r.h<<8)+r.l); r.a+=m; ((r.a+=(((r.f&0x10) != 0))) != 0)?1:0; r.f=(r.a>255)?0x10:0; r.a&=255; if(r.a == 0) r.f|=0x80; if(((r.a^m^a)&0x10) != 0) r.f|=0x20; r.m=2; } public void ADCn
-        () { int a=r.a; int m=mmu.rb(r.pc); r.a+=m; r.pc++; ((r.a+=(((r.f&0x10) != 0))) != 0)?1:0; r.f=(r.a>255)?0x10:0; r.a&=255; if(r.a == 0) r.f|=0x80; if(((r.a^m^a)&0x10) != 0) r.f|=0x20; r.m=2; }
+        () { int a=r.a; r.a+=r.b; r.a+=((((r.f&0x10) != 0)))?1:0; r.f=(r.a>255)?0x10:0; r.a&=255; if(r.a == 0) r.f|=0x80; if(((r.a^r.b^a)&0x10) != 0) r.f|=0x20; r.m=1; } public void ADCr_c
+        () { int a=r.a; r.a+=r.c; r.a+=((((r.f&0x10) != 0)))?1:0; r.f=(r.a>255)?0x10:0; r.a&=255; if(r.a == 0) r.f|=0x80; if(((r.a^r.c^a)&0x10) != 0) r.f|=0x20; r.m=1; } public void ADCr_d
+        () { int a=r.a; r.a+=r.d; r.a+=((((r.f&0x10) != 0)))?1:0; r.f=(r.a>255)?0x10:0; r.a&=255; if(r.a == 0) r.f|=0x80; if(((r.a^r.d^a)&0x10) != 0) r.f|=0x20; r.m=1; } public void ADCr_e
+        () { int a=r.a; r.a+=r.e; r.a+=((((r.f&0x10) != 0)))?1:0; r.f=(r.a>255)?0x10:0; r.a&=255; if(r.a == 0) r.f|=0x80; if(((r.a^r.e^a)&0x10) != 0) r.f|=0x20; r.m=1; } public void ADCr_h
+        () { int a=r.a; r.a+=r.h; r.a+=((((r.f&0x10) != 0)))?1:0; r.f=(r.a>255)?0x10:0; r.a&=255; if(r.a == 0) r.f|=0x80; if(((r.a^r.h^a)&0x10) != 0) r.f|=0x20; r.m=1; } public void ADCr_l
+        () { int a=r.a; r.a+=r.l; r.a+=((((r.f&0x10) != 0)))?1:0; r.f=(r.a>255)?0x10:0; r.a&=255; if(r.a == 0) r.f|=0x80; if(((r.a^r.l^a)&0x10) != 0) r.f|=0x20; r.m=1; } public void ADCr_a
+        () { int a=r.a; r.a+=r.a; r.a+=((((r.f&0x10) != 0)))?1:0; r.f=(r.a>255)?0x10:0; r.a&=255; if(r.a == 0) r.f|=0x80; if(((r.a^r.a^a)&0x10) != 0) r.f|=0x20; r.m=1; } public void ADCHL
+        () { int a=r.a; int m=mmu.rb((r.h<<8)+r.l); r.a+=m; r.a+=((r.f&0x10) != 0)?1:0; r.f=(r.a>255)?0x10:0; r.a&=255; if(r.a == 0) r.f|=0x80; if(((r.a^m^a)&0x10) != 0) r.f|=0x20; r.m=2; } public void ADCn
+        () { int a=r.a; int m=mmu.rb(r.pc); r.a+=m; r.pc++; r.a+=((r.f&0x10) != 0)?1:0; r.f=(r.a>255)?0x10:0; r.a&=255; if(r.a == 0) r.f|=0x80; if(((r.a^m^a)&0x10) != 0) r.f|=0x20; r.m=2; }
 
         public void SUBr_b
         () { int a=r.a; r.a-=r.b; r.f=(r.a<0)?0x50:0x40; r.a&=255; if(r.a == 0) r.f|=0x80; if(((r.a^r.b^a)&0x10) != 0) r.f|=0x20; r.m=1; } public void SUBr_c
@@ -237,15 +237,15 @@ public class Z80{
         () { int a=r.a; int m=mmu.rb(r.pc); r.a-=m; r.pc++; r.f=(r.a<0)?0x50:0x40; r.a&=255; if(r.a == 0) r.f|=0x80; if(((r.a^m^a)&0x10) != 0) r.f|=0x20; r.m=2; }
 
         public void SBCr_b
-        () { int a=r.a; r.a-=r.b; r.a-=((((r.f&0x10) != 0)) != 0)?1:0; r.f=(r.a<0)?0x50:0x40; r.a&=255; if(r.a == 0) r.f|=0x80; if(((r.a^r.b^a)&0x10) != 0) r.f|=0x20; r.m=1; } public void SBCr_c
-        () { int a=r.a; r.a-=r.c; r.a-=((((r.f&0x10) != 0)) != 0)?1:0; r.f=(r.a<0)?0x50:0x40; r.a&=255; if(r.a == 0) r.f|=0x80; if(((r.a^r.c^a)&0x10) != 0) r.f|=0x20; r.m=1; } public void SBCr_d
-        () { int a=r.a; r.a-=r.d; r.a-=((((r.f&0x10) != 0)) != 0)?1:0; r.f=(r.a<0)?0x50:0x40; r.a&=255; if(r.a == 0) r.f|=0x80; if(((r.a^r.d^a)&0x10) != 0) r.f|=0x20; r.m=1; } public void SBCr_e
-        () { int a=r.a; r.a-=r.e; r.a-=((((r.f&0x10) != 0)) != 0)?1:0; r.f=(r.a<0)?0x50:0x40; r.a&=255; if(r.a == 0) r.f|=0x80; if(((r.a^r.e^a)&0x10) != 0) r.f|=0x20; r.m=1; } public void SBCr_h
-        () { int a=r.a; r.a-=r.h; r.a-=((((r.f&0x10) != 0)) != 0)?1:0; r.f=(r.a<0)?0x50:0x40; r.a&=255; if(r.a == 0) r.f|=0x80; if(((r.a^r.h^a)&0x10) != 0) r.f|=0x20; r.m=1; } public void SBCr_l
-        () { int a=r.a; r.a-=r.l; r.a-=((((r.f&0x10) != 0)) != 0)?1:0; r.f=(r.a<0)?0x50:0x40; r.a&=255; if(r.a == 0) r.f|=0x80; if(((r.a^r.l^a)&0x10) != 0) r.f|=0x20; r.m=1; } public void SBCr_a
-        () { int a=r.a; r.a-=r.a; r.a-=((((r.f&0x10) != 0)) != 0)?1:0; r.f=(r.a<0)?0x50:0x40; r.a&=255; if(r.a == 0) r.f|=0x80; if(((r.a^r.a^a)&0x10) != 0) r.f|=0x20; r.m=1; } public void SBCHL
-        () { int a=r.a; int m=mmu.rb((r.h<<8)+r.l); r.a-=m; (r.a-=(((r.f&0x10) != 0)) != 0)?1:0; r.f=(r.a<0)?0x50:0x40; r.a&=255; if(r.a == 0) r.f|=0x80; if(((r.a^m^a)&0x10) != 0) r.f|=0x20; r.m=2; } public void SBCn
-        () { int a=r.a; int m=mmu.rb(r.pc); r.a-=m; r.pc++; (r.a-=(((r.f&0x10) != 0)) != 0)?1:0; r.f=(r.a<0)?0x50:0x40; r.a&=255; if(r.a == 0) r.f|=0x80; if(((r.a^m^a)&0x10) != 0) r.f|=0x20; r.m=2; }
+        () { int a=r.a; r.a-=r.b; r.a-=((((r.f&0x10) != 0)))?1:0; r.f=(r.a<0)?0x50:0x40; r.a&=255; if(r.a == 0) r.f|=0x80; if(((r.a^r.b^a)&0x10) != 0) r.f|=0x20; r.m=1; } public void SBCr_c
+        () { int a=r.a; r.a-=r.c; r.a-=((((r.f&0x10) != 0)))?1:0; r.f=(r.a<0)?0x50:0x40; r.a&=255; if(r.a == 0) r.f|=0x80; if(((r.a^r.c^a)&0x10) != 0) r.f|=0x20; r.m=1; } public void SBCr_d
+        () { int a=r.a; r.a-=r.d; r.a-=((((r.f&0x10) != 0)))?1:0; r.f=(r.a<0)?0x50:0x40; r.a&=255; if(r.a == 0) r.f|=0x80; if(((r.a^r.d^a)&0x10) != 0) r.f|=0x20; r.m=1; } public void SBCr_e
+        () { int a=r.a; r.a-=r.e; r.a-=((((r.f&0x10) != 0)))?1:0; r.f=(r.a<0)?0x50:0x40; r.a&=255; if(r.a == 0) r.f|=0x80; if(((r.a^r.e^a)&0x10) != 0) r.f|=0x20; r.m=1; } public void SBCr_h
+        () { int a=r.a; r.a-=r.h; r.a-=((((r.f&0x10) != 0)))?1:0; r.f=(r.a<0)?0x50:0x40; r.a&=255; if(r.a == 0) r.f|=0x80; if(((r.a^r.h^a)&0x10) != 0) r.f|=0x20; r.m=1; } public void SBCr_l
+        () { int a=r.a; r.a-=r.l; r.a-=((((r.f&0x10) != 0)))?1:0; r.f=(r.a<0)?0x50:0x40; r.a&=255; if(r.a == 0) r.f|=0x80; if(((r.a^r.l^a)&0x10) != 0) r.f|=0x20; r.m=1; } public void SBCr_a
+        () { int a=r.a; r.a-=r.a; r.a-=((((r.f&0x10) != 0)))?1:0; r.f=(r.a<0)?0x50:0x40; r.a&=255; if(r.a == 0) r.f|=0x80; if(((r.a^r.a^a)&0x10) != 0) r.f|=0x20; r.m=1; } public void SBCHL
+        () { int a=r.a; int m=mmu.rb((r.h<<8)+r.l); r.a-=m; r.a-=((r.f&0x10) != 0)?1:0; r.f=(r.a<0)?0x50:0x40; r.a&=255; if(r.a == 0) r.f|=0x80; if(((r.a^m^a)&0x10) != 0) r.f|=0x20; r.m=2; } public void SBCn
+        () { int a=r.a; int m=mmu.rb(r.pc); r.a-=m; r.pc++; r.a-=((r.f&0x10) != 0)?1:0; r.f=(r.a<0)?0x50:0x40; r.a&=255; if(r.a == 0) r.f|=0x80; if(((r.a^m^a)&0x10) != 0) r.f|=0x20; r.m=2; }
 
         public void CPr_b
         () { int i=r.a; i-=r.b; r.f=(i<0)?0x50:0x40; i&=255; if(i!=0) r.f|=0x80; if(((r.a^r.b^i)&0x10) != 0) r.f|=0x20; r.m=1; } public void CPr_c
@@ -594,24 +594,24 @@ public class Z80{
         () { int i=mmu.rb((r.h<<8)+r.l); int ci=((i&0x80) != 0)?1:0; int co=((i&0x80) != 0)?0x10:0; i=(i<<1)+ci; i&=255; r.f=((i) != 0)?0:0x80; mmu.wb((r.h<<8)+r.l,i); r.f=(r.f&0xEF)+co; r.m=4; }
 
         public void RRr_b
-        () { int ci=((r.f&0x10) != 0)?0x80:0; int co=r.b&1?0x10:0; r.b=(r.b>>1)+ci; r.b&=255; r.f=((r.b) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void RRr_c
-        () { int ci=((r.f&0x10) != 0)?0x80:0; int co=r.c&1?0x10:0; r.c=(r.c>>1)+ci; r.c&=255; r.f=((r.c) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void RRr_d
-        () { int ci=((r.f&0x10) != 0)?0x80:0; int co=r.d&1?0x10:0; r.d=(r.d>>1)+ci; r.d&=255; r.f=((r.d) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void RRr_e
-        () { int ci=((r.f&0x10) != 0)?0x80:0; int co=r.e&1?0x10:0; r.e=(r.e>>1)+ci; r.e&=255; r.f=((r.e) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void RRr_h
-        () { int ci=((r.f&0x10) != 0)?0x80:0; int co=r.h&1?0x10:0; r.h=(r.h>>1)+ci; r.h&=255; r.f=((r.h) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void RRr_l
-        () { int ci=((r.f&0x10) != 0)?0x80:0; int co=r.l&1?0x10:0; r.l=(r.l>>1)+ci; r.l&=255; r.f=((r.l) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void RRr_a
+        () { int ci=((r.f&0x10) != 0)?0x80:0; int co=((r.b&1) != 0)?0x10:0; r.b=(r.b>>1)+ci; r.b&=255; r.f=((r.b) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void RRr_c
+        () { int ci=((r.f&0x10) != 0)?0x80:0; int co=((r.c&1) != 0)?0x10:0; r.c=(r.c>>1)+ci; r.c&=255; r.f=((r.c) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void RRr_d
+        () { int ci=((r.f&0x10) != 0)?0x80:0; int co=((r.d&1) != 0)?0x10:0; r.d=(r.d>>1)+ci; r.d&=255; r.f=((r.d) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void RRr_e
+        () { int ci=((r.f&0x10) != 0)?0x80:0; int co=((r.e&1) != 0)?0x10:0; r.e=(r.e>>1)+ci; r.e&=255; r.f=((r.e) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void RRr_h
+        () { int ci=((r.f&0x10) != 0)?0x80:0; int co=((r.h&1) != 0)?0x10:0; r.h=(r.h>>1)+ci; r.h&=255; r.f=((r.h) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void RRr_l
+        () { int ci=((r.f&0x10) != 0)?0x80:0; int co=((r.l&1) != 0)?0x10:0; r.l=(r.l>>1)+ci; r.l&=255; r.f=((r.l) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void RRr_a
         () { int ci=((r.f&0x10) != 0)?0x80:0; int  co=((r.a&1)!=0)?0x10:0; r.a=(r.a>>1)+ci; r.a&=255; r.f=((r.a) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void RRHL
-        () { int i=mmu.rb((r.h<<8)+r.l); int ci=((r.f&0x10) != 0)?0x80:0; int co=i&1?0x10:0; i=(i>>1)+ci; i&=255; mmu.wb((r.h<<8)+r.l,i); r.f=((i) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=4; }
+        () { int i=mmu.rb((r.h<<8)+r.l); int ci=((r.f&0x10) != 0)?0x80:0; int co=((i&1) != 0)?0x10:0; i=(i>>1)+ci; i&=255; mmu.wb((r.h<<8)+r.l,i); r.f=((i) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=4; }
 
         public void RRCr_b
-        () { int ci=r.b&1?0x80:0; int co=r.b&1?0x10:0; r.b=(r.b>>1)+ci; r.b&=255; r.f=((r.b) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void RRCr_c
-        () { int ci=r.c&1?0x80:0; int co=r.c&1?0x10:0; r.c=(r.c>>1)+ci; r.c&=255; r.f=((r.c) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void RRCr_d
-        () { int ci=r.d&1?0x80:0; int co=r.d&1?0x10:0; r.d=(r.d>>1)+ci; r.d&=255; r.f=((r.d) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void RRCr_e
-        () { int ci=r.e&1?0x80:0; int co=r.e&1?0x10:0; r.e=(r.e>>1)+ci; r.e&=255; r.f=((r.e) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void RRCr_h
-        () { int ci=r.h&1?0x80:0; int co=r.h&1?0x10:0; r.h=(r.h>>1)+ci; r.h&=255; r.f=((r.h) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void RRCr_l
-        () { int ci=r.l&1?0x80:0; int co=r.l&1?0x10:0; r.l=(r.l>>1)+ci; r.l&=255; r.f=((r.l) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void RRCr_a
-        () { int ci=r.a&1?0x80:0; int  co=((r.a&1)!=0)?0x10:0; r.a=(r.a>>1)+ci; r.a&=255; r.f=((r.a) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void RRCHL
-        () { int i=mmu.rb((r.h<<8)+r.l); int ci=i&1?0x80:0; int co=i&1?0x10:0; i=(i>>1)+ci; i&=255; mmu.wb((r.h<<8)+r.l,i); r.f=((i) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=4; }
+        () { int ci=((r.b&1) != 0)?0x80:0; int co=((r.b&1) != 0)?0x10:0; r.b=(r.b>>1)+ci; r.b&=255; r.f=((r.b) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void RRCr_c
+        () { int ci=((r.c&1) != 0)?0x80:0; int co=((r.c&1) != 0)?0x10:0; r.c=(r.c>>1)+ci; r.c&=255; r.f=((r.c) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void RRCr_d
+        () { int ci=((r.d&1) != 0)?0x80:0; int co=((r.d&1) != 0)?0x10:0; r.d=(r.d>>1)+ci; r.d&=255; r.f=((r.d) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void RRCr_e
+        () { int ci=((r.e&1) != 0)?0x80:0; int co=((r.e&1) != 0)?0x10:0; r.e=(r.e>>1)+ci; r.e&=255; r.f=((r.e) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void RRCr_h
+        () { int ci=((r.h&1) != 0)?0x80:0; int co=((r.h&1) != 0)?0x10:0; r.h=(r.h>>1)+ci; r.h&=255; r.f=((r.h) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void RRCr_l
+        () { int ci=((r.l&1) != 0)?0x80:0; int co=((r.l&1) != 0)?0x10:0; r.l=(r.l>>1)+ci; r.l&=255; r.f=((r.l) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void RRCr_a
+        () { int ci=((r.a&1) != 0)?0x80:0; int  co=((r.a&1)!=0)?0x10:0; r.a=(r.a>>1)+ci; r.a&=255; r.f=((r.a) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void RRCHL
+        () { int i=mmu.rb((r.h<<8)+r.l); int ci=((i&1) != 0)?0x80:0; int co=((i&1) != 0)?0x10:0; i=(i>>1)+ci; i&=255; mmu.wb((r.h<<8)+r.l,i); r.f=((i) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=4; }
 
         public void SLAr_b
         () { int co=((r.b&0x80) != 0)?0x10:0; r.b=(r.b<<1)&255; r.f=((r.b) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void SLAr_c
@@ -620,7 +620,7 @@ public class Z80{
         () { int co=((r.e&0x80) != 0)?0x10:0; r.e=(r.e<<1)&255; r.f=((r.e) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void SLAr_h
         () { int co=((r.h&0x80) != 0)?0x10:0; r.h=(r.h<<1)&255; r.f=((r.h) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void SLAr_l
         () { int co=((r.l&0x80) != 0)?0x10:0; r.l=(r.l<<1)&255; r.f=((r.l) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void SLAr_a
-        () { int  co=((((r.a&0x80) != 0))!=0)?0x10:0; r.a=(r.a<<1)&255; r.f=((r.a) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; }
+        () { int  co=((r.a&0x80) != 0)?0x10:0; r.a=(r.a<<1)&255; r.f=((r.a) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; }
 
         public void SLLr_b
         () { int co=((r.b&0x80) != 0)?0x10:0; r.b=(r.b<<1)&255+1; r.f=((r.b) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void SLLr_c
@@ -629,24 +629,24 @@ public class Z80{
         () { int co=((r.e&0x80) != 0)?0x10:0; r.e=(r.e<<1)&255+1; r.f=((r.e) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void SLLr_h
         () { int co=((r.h&0x80) != 0)?0x10:0; r.h=(r.h<<1)&255+1; r.f=((r.h) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void SLLr_l
         () { int co=((r.l&0x80) != 0)?0x10:0; r.l=(r.l<<1)&255+1; r.f=((r.l) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void SLLr_a
-        () { int  co=((((r.a&0x80) != 0))!=0)?0x10:0; r.a=(r.a<<1)&255+1; r.f=((r.a) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; }
+        () { int  co=((r.a&0x80) != 0)?0x10:0; r.a=(r.a<<1)&255+1; r.f=((r.a) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; }
 
         public void SRAr_b
-        () { int ci=((r.b&0x80) != 0); int co=r.b&1?0x10:0; r.b=((r.b>>1)+ci)&255; r.f=((r.b) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void SRAr_c
-        () { int ci=((r.c&0x80) != 0); int co=r.c&1?0x10:0; r.c=((r.c>>1)+ci)&255; r.f=((r.c) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void SRAr_d
-        () { int ci=((r.d&0x80) != 0); int co=r.d&1?0x10:0; r.d=((r.d>>1)+ci)&255; r.f=((r.d) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void SRAr_e
-        () { int ci=((r.e&0x80) != 0); int co=r.e&1?0x10:0; r.e=((r.e>>1)+ci)&255; r.f=((r.e) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void SRAr_h
-        () { int ci=((r.h&0x80) != 0); int co=r.h&1?0x10:0; r.h=((r.h>>1)+ci)&255; r.f=((r.h) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void SRAr_l
-        () { int ci=((r.l&0x80) != 0); int co=r.l&1?0x10:0; r.l=((r.l>>1)+ci)&255; r.f=((r.l) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void SRAr_a
-        () { int ci=((r.a&0x80) != 0); int  co=((r.a&1)!=0)?0x10:0; r.a=((r.a>>1)+ci)&255; r.f=((r.a) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; }
+        () { int ci=((r.b&0x80)); int co=((r.b&1) != 0)?0x10:0; r.b=((r.b>>1)+ci)&255; r.f=((r.b) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void SRAr_c
+        () { int ci=((r.c&0x80)); int co=((r.c&1) != 0)?0x10:0; r.c=((r.c>>1)+ci)&255; r.f=((r.c) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void SRAr_d
+        () { int ci=((r.d&0x80)); int co=((r.d&1) != 0)?0x10:0; r.d=((r.d>>1)+ci)&255; r.f=((r.d) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void SRAr_e
+        () { int ci=((r.e&0x80)); int co=((r.e&1) != 0)?0x10:0; r.e=((r.e>>1)+ci)&255; r.f=((r.e) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void SRAr_h
+        () { int ci=((r.h&0x80)); int co=((r.h&1) != 0)?0x10:0; r.h=((r.h>>1)+ci)&255; r.f=((r.h) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void SRAr_l
+        () { int ci=((r.l&0x80)); int co=((r.l&1) != 0)?0x10:0; r.l=((r.l>>1)+ci)&255; r.f=((r.l) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void SRAr_a
+        () { int ci=((r.a&0x80)); int  co=((r.a&1)!=0)?0x10:0; r.a=((r.a>>1)+ci)&255; r.f=((r.a) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; }
 
         public void SRLr_b
-        () { int co=r.b&1?0x10:0; r.b=(r.b>>1)&255; r.f=((r.b) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void SRLr_c
-        () { int co=r.c&1?0x10:0; r.c=(r.c>>1)&255; r.f=((r.c) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void SRLr_d
-        () { int co=r.d&1?0x10:0; r.d=(r.d>>1)&255; r.f=((r.d) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void SRLr_e
-        () { int co=r.e&1?0x10:0; r.e=(r.e>>1)&255; r.f=((r.e) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void SRLr_h
-        () { int co=r.h&1?0x10:0; r.h=(r.h>>1)&255; r.f=((r.h) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void SRLr_l
-        () { int co=r.l&1?0x10:0; r.l=(r.l>>1)&255; r.f=((r.l) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void SRLr_a
+        () { int co=((r.b&1) != 0)?0x10:0; r.b=(r.b>>1)&255; r.f=((r.b) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void SRLr_c
+        () { int co=((r.c&1) != 0)?0x10:0; r.c=(r.c>>1)&255; r.f=((r.c) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void SRLr_d
+        () { int co=((r.d&1) != 0)?0x10:0; r.d=(r.d>>1)&255; r.f=((r.d) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void SRLr_e
+        () { int co=((r.e&1) != 0)?0x10:0; r.e=(r.e>>1)&255; r.f=((r.e) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void SRLr_h
+        () { int co=((r.h&1) != 0)?0x10:0; r.h=(r.h>>1)&255; r.f=((r.h) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void SRLr_l
+        () { int co=((r.l&1) != 0)?0x10:0; r.l=(r.l>>1)&255; r.f=((r.l) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; } public void SRLr_a
         () { int  co=((r.a&1)!=0)?0x10:0; r.a=(r.a>>1)&255; r.f=((r.a) != 0)?0:0x80; r.f=(r.f&0xEF)+co; r.m=2; }
 
         public void CPL
@@ -676,15 +676,15 @@ public class Z80{
         () { r.pc=(r.h<<8)+r.l; r.m=1; } public void JPNZnn
         () { r.m=3; if((r.f&0x80)==0x00) { r.pc=mmu.rw(r.pc); r.m++; } else r.pc+=2; } public void JPZnn
         ()  { r.m=3; if((r.f&0x80)==0x80) { r.pc=mmu.rw(r.pc); r.m++; } else r.pc+=2; } public void JPNCnn
-        () { r.m=3; if((((r.f&0x10) != 0))==0x00) { r.pc=mmu.rw(r.pc); r.m++; } else r.pc+=2; } public void JPCnn
-        ()  { r.m=3; if((((r.f&0x10) != 0))==0x10) { r.pc=mmu.rw(r.pc); r.m++; } else r.pc+=2; }
+        () { r.m=3; if((((r.f&0x10)))==0x00) { r.pc=mmu.rw(r.pc); r.m++; } else r.pc+=2; } public void JPCnn
+        ()  { r.m=3; if((((r.f&0x10)))==0x10) { r.pc=mmu.rw(r.pc); r.m++; } else r.pc+=2; }
 
         public void JRn
         () { int i=mmu.rb(r.pc); if(i>127) i=-((~i+1)&255); r.pc++; r.m=2; r.pc+=i; r.m++; } public void JRNZn
         () { int i=mmu.rb(r.pc); if(i>127) i=-((~i+1)&255); r.pc++; r.m=2; if((r.f&0x80)==0x00) { r.pc+=i; r.m++; } } public void JRZn
         ()  { int i=mmu.rb(r.pc); if(i>127) i=-((~i+1)&255); r.pc++; r.m=2; if((r.f&0x80)==0x80) { r.pc+=i; r.m++; } } public void JRNCn
-        () { int i=mmu.rb(r.pc); if(i>127) i=-((~i+1)&255); r.pc++; r.m=2; if((((r.f&0x10) != 0))==0x00) { r.pc+=i; r.m++; } } public void JRCn
-        ()  { int i=mmu.rb(r.pc); if(i>127) i=-((~i+1)&255); r.pc++; r.m=2; if((((r.f&0x10) != 0))==0x10) { r.pc+=i; r.m++; } }
+        () { int i=mmu.rb(r.pc); if(i>127) i=-((~i+1)&255); r.pc++; r.m=2; if(((r.f&0x10))==0x00) { r.pc+=i; r.m++; } } public void JRCn
+        ()  { int i=mmu.rb(r.pc); if(i>127) i=-((~i+1)&255); r.pc++; r.m=2; if(((r.f&0x10))==0x10) { r.pc+=i; r.m++; } }
 
         public void DJNZn
         () { int i=mmu.rb(r.pc); if(i>127) i=-((~i+1)&255); r.pc++; r.m=2; r.b--; if((r.b) != 0) { r.pc+=i; r.m++; } }
@@ -693,35 +693,35 @@ public class Z80{
         () { r.sp-=2; mmu.ww(r.sp,r.pc+2); r.pc=mmu.rw(r.pc); r.m=5; } public void CALLNZnn
         () { r.m=3; if((r.f&0x80)==0x00) { r.sp-=2; mmu.ww(r.sp,r.pc+2); r.pc=mmu.rw(r.pc); r.m+=2; } else r.pc+=2; } public void CALLZnn
         () { r.m=3; if((r.f&0x80)==0x80) { r.sp-=2; mmu.ww(r.sp,r.pc+2); r.pc=mmu.rw(r.pc); r.m+=2; } else r.pc+=2; } public void CALLNCnn
-        () { r.m=3; if((((r.f&0x10) != 0))==0x00) { r.sp-=2; mmu.ww(r.sp,r.pc+2); r.pc=mmu.rw(r.pc); r.m+=2; } else r.pc+=2; } public void CALLCnn
-        () { r.m=3; if((((r.f&0x10) != 0))==0x10) { r.sp-=2; mmu.ww(r.sp,r.pc+2); r.pc=mmu.rw(r.pc); r.m+=2; } else r.pc+=2; }
+        () { r.m=3; if((((r.f&0x10)))==0x00) { r.sp-=2; mmu.ww(r.sp,r.pc+2); r.pc=mmu.rw(r.pc); r.m+=2; } else r.pc+=2; } public void CALLCnn
+        () { r.m=3; if((((r.f&0x10)))==0x10) { r.sp-=2; mmu.ww(r.sp,r.pc+2); r.pc=mmu.rw(r.pc); r.m+=2; } else r.pc+=2; }
 
         public void RET
         () { r.pc=mmu.rw(r.sp); r.sp+=2; r.m=3; } public void RETI
-        () { r.ime=1; _ops.rrs(); r.pc=mmu.rw(r.sp); r.sp+=2; r.m=3; } public void RETNZ
+        () { r.ime=1; ops.rrs(); r.pc=mmu.rw(r.sp); r.sp+=2; r.m=3; } public void RETNZ
         () { r.m=1; if((r.f&0x80)==0x00) { r.pc=mmu.rw(r.sp); r.sp+=2; r.m+=2; } } public void RETZ
         () { r.m=1; if((r.f&0x80)==0x80) { r.pc=mmu.rw(r.sp); r.sp+=2; r.m+=2; } } public void RETNC
-        () { r.m=1; if((((r.f&0x10) != 0))==0x00) { r.pc=mmu.rw(r.sp); r.sp+=2; r.m+=2; } } public void RETC
-        () { r.m=1; if((((r.f&0x10) != 0))==0x10) { r.pc=mmu.rw(r.sp); r.sp+=2; r.m+=2; } }
+        () { r.m=1; if((((r.f&0x10)))==0x00) { r.pc=mmu.rw(r.sp); r.sp+=2; r.m+=2; } } public void RETC
+        () { r.m=1; if((((r.f&0x10)))==0x10) { r.pc=mmu.rw(r.sp); r.sp+=2; r.m+=2; } }
 
         public void RST00
-        () { _ops.rsv(); r.sp-=2; mmu.ww(r.sp,r.pc); r.pc=0x00; r.m=3; } public void RST08
-        () { _ops.rsv(); r.sp-=2; mmu.ww(r.sp,r.pc); r.pc=0x08; r.m=3; } public void RST10
-        () { _ops.rsv(); r.sp-=2; mmu.ww(r.sp,r.pc); r.pc=0x10; r.m=3; } public void RST18
-        () { _ops.rsv(); r.sp-=2; mmu.ww(r.sp,r.pc); r.pc=0x18; r.m=3; } public void RST20
-        () { _ops.rsv(); r.sp-=2; mmu.ww(r.sp,r.pc); r.pc=0x20; r.m=3; } public void RST28
-        () { _ops.rsv(); r.sp-=2; mmu.ww(r.sp,r.pc); r.pc=0x28; r.m=3; } public void RST30
-        () { _ops.rsv(); r.sp-=2; mmu.ww(r.sp,r.pc); r.pc=0x30; r.m=3; } public void RST38
-        () { _ops.rsv(); r.sp-=2; mmu.ww(r.sp,r.pc); r.pc=0x38; r.m=3; } public void RST40
-        () { _ops.rsv(); r.sp-=2; mmu.ww(r.sp,r.pc); r.pc=0x40; r.m=3; } public void RST48
-        () { _ops.rsv(); r.sp-=2; mmu.ww(r.sp,r.pc); r.pc=0x48; r.m=3; } public void RST50
-        () { _ops.rsv(); r.sp-=2; mmu.ww(r.sp,r.pc); r.pc=0x50; r.m=3; } public void RST58
-        () { _ops.rsv(); r.sp-=2; mmu.ww(r.sp,r.pc); r.pc=0x58; r.m=3; } public void RST60
-        () { _ops.rsv(); r.sp-=2; mmu.ww(r.sp,r.pc); r.pc=0x60; r.m=3; }
+        () { ops.rsv(); r.sp-=2; mmu.ww(r.sp,r.pc); r.pc=0x00; r.m=3; } public void RST08
+        () { ops.rsv(); r.sp-=2; mmu.ww(r.sp,r.pc); r.pc=0x08; r.m=3; } public void RST10
+        () { ops.rsv(); r.sp-=2; mmu.ww(r.sp,r.pc); r.pc=0x10; r.m=3; } public void RST18
+        () { ops.rsv(); r.sp-=2; mmu.ww(r.sp,r.pc); r.pc=0x18; r.m=3; } public void RST20
+        () { ops.rsv(); r.sp-=2; mmu.ww(r.sp,r.pc); r.pc=0x20; r.m=3; } public void RST28
+        () { ops.rsv(); r.sp-=2; mmu.ww(r.sp,r.pc); r.pc=0x28; r.m=3; } public void RST30
+        () { ops.rsv(); r.sp-=2; mmu.ww(r.sp,r.pc); r.pc=0x30; r.m=3; } public void RST38
+        () { ops.rsv(); r.sp-=2; mmu.ww(r.sp,r.pc); r.pc=0x38; r.m=3; } public void RST40
+        () { ops.rsv(); r.sp-=2; mmu.ww(r.sp,r.pc); r.pc=0x40; r.m=3; } public void RST48
+        () { ops.rsv(); r.sp-=2; mmu.ww(r.sp,r.pc); r.pc=0x48; r.m=3; } public void RST50
+        () { ops.rsv(); r.sp-=2; mmu.ww(r.sp,r.pc); r.pc=0x50; r.m=3; } public void RST58
+        () { ops.rsv(); r.sp-=2; mmu.ww(r.sp,r.pc); r.pc=0x58; r.m=3; } public void RST60
+        () { ops.rsv(); r.sp-=2; mmu.ww(r.sp,r.pc); r.pc=0x60; r.m=3; }
 
         public void NOP
         () { r.m=1; } public void HALT
-        () { _halt=1; r.m=1; }
+        () { halt=true; r.m=1; }
 
         public void DI
         () { r.ime=0; r.m=1; } public void EI
@@ -744,13 +744,13 @@ public class Z80{
       r.h = rsv.h; r.l = rsv.l;
     }
 
-    public void MAPcb
-        () {
-      int i=mmu.rb(r.pc); r.pc++;
-      r.pc &= 65535;
-      if(_cbmap[i]) _cbmap[i]();
-      else System.out.println((i) != 0);
-    }
+    // public void MAPcb
+    //     () {
+    //   int i=mmu.rb(r.pc); r.pc++;
+    //   r.pc &= 65535;
+    //   if(cbmap[i]) cbmap[i]();
+    //   else System.out.println((i) != 0);
+    // }
 
     
     }
