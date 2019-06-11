@@ -197,6 +197,8 @@ public class MMU {
                 }
 
         }
+
+        return 0;
     }
 
     public int rw(int addr) {

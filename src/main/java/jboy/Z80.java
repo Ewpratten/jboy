@@ -8,7 +8,13 @@ public class Z80 {
         static int ime = 0;
     }
 
-    public Registers getRegisters() {
-        return new Registers();
+    static Registers r = null;
+
+    public static Registers getRegisters() {
+        if (r == null) {
+            r = new Registers();
+        }
+
+        return r;
     }
 }
