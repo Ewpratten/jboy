@@ -1,5 +1,8 @@
 package jboy;
 
+import java.io.File;
+import java.nio.file.Files;
+
 public class MMU {
     int[] bios = new int[] { 0x31, 0xFE, 0xFF, 0xAF, 0x21, 0xFF, 0x9F, 0x32, 0xCB, 0x7C, 0x20, 0xFB, 0x21, 0x26, 0xFF,
             0x0E, 0x11, 0x3E, 0x80, 0x32, 0xE2, 0x0C, 0x3E, 0xF3, 0xE2, 0x32, 0x3E, 0x77, 0x77, 0x3E, 0xFC, 0xE0, 0x47,
@@ -17,7 +20,7 @@ public class MMU {
             0x13, 0xBE, 0x20, 0xFE, 0x23, 0x7D, 0xFE, 0x34, 0x20, 0xF5, 0x06, 0x19, 0x78, 0x86, 0x23, 0x05, 0x20, 0xFB,
             0x86, 0x20, 0xFE, 0x3E, 0x01, 0xE0, 0x50 };
 
-    char[] rom;
+    byte[] rom;
     int cart_type = 0;
 
     static class MBC {
@@ -36,6 +39,18 @@ public class MMU {
 
     boolean in_bios = true;
     int _if, ie = 0;
+
+    Z80 z80;
+    GPU gpu;
+    Timer timer;
+    KEY key;
+
+    public MMU(Z80 z80, GPU gpu, Timer timer, KEY key) {
+        this.z80 = z80;
+        this.gpu = gpu;
+        this.timer = timer;
+        this.key = key;
+    }
 
     public void reset() {
         /* Reset RAM */
@@ -67,5 +82,273 @@ public class MMU {
 
         System.out.println("MMU has been reset");
 
+    }
+
+    public void load(File cart) {
+        try {
+            rom = Files.readAllBytes(cart.toPath());
+        } catch (Exception e) {
+            System.out.println("Invalid ROM. Loading nothing");
+        }
+    }
+
+    public int rb(int addr) {
+        switch (addr & 0xf000) {
+        case 0:
+            if (in_bios) {
+                if (addr < 0x100) {
+                    return bios[addr];
+                } else if (z80.getRegisters().pc == 0x0100) {
+                    in_bios = false;
+                    System.out.println("Exiting BIOS");
+                }
+
+            } else {
+                return rom[addr];
+            }
+
+        case 0x1000:
+        case 0x2000:
+        case 0x3000:
+            return rom[addr];
+
+        // ROM bank 1
+        case 0x4000:
+        case 0x5000:
+        case 0x6000:
+        case 0x7000:
+            return rom[rom_offset + (addr & 0x3fff)];
+
+        // VRAM
+        case 0x8000:
+        case 0x9000:
+            return gpu.vram[addr & 0x1FFF];
+
+        // External RAM
+        case 0xA000:
+        case 0xB000:
+            return eram[ram_offset + (addr & 0x3fff)];
+
+        // Ram and Echo
+        case 0xC000:
+        case 0xD000:
+        case 0xE000:
+            return wram[addr & 0x1fff];
+
+        // Everything else
+        case 0xF000:
+
+            // Echo RAM
+            switch (addr & 0x0f00) {
+            case 0x000:
+            case 0x100:
+            case 0x200:
+            case 0x300:
+            case 0x400:
+            case 0x500:
+            case 0x600:
+            case 0x700:
+            case 0x800:
+            case 0x900:
+            case 0xA00:
+            case 0xB00:
+            case 0xC00:
+            case 0xD00:
+                return wram[addr & 0x1fff];
+
+            // OAM
+            case 0xE00:
+                return ((addr & 0xFF) < 0xA0) ? gpu.oam[addr & 0xFF] : 0;
+            }
+
+            // Zeropage RAM, I/O, interrupts
+        case 0xF00:
+            if (addr == 0xFFFF) {
+                return ie;
+            } else if (addr > 0xFF7F) {
+                return zram[addr & 0x7F];
+            } else
+                switch (addr & 0xF0) {
+                case 0x00:
+                    switch (addr & 0xF) {
+                    case 0:
+                        return key.rb(); // JOYP
+                    case 4:
+                    case 5:
+                    case 6:
+                    case 7:
+                        return timer.rb(addr);
+                    case 15:
+                        return _if; // Interrupt flags
+                    default:
+                        return 0;
+                    }
+
+                case 0x10:
+                case 0x20:
+                case 0x30:
+                    return 0;
+
+                case 0x40:
+                case 0x50:
+                case 0x60:
+                case 0x70:
+                    return gpu.rb(addr);
+                }
+
+        }
+    }
+
+    public int rw(int addr) {
+        return (rb(addr) + rb(addr + 1) << 8);
+    }
+
+    public void wb(int addr, int val) {
+        switch (addr & 0xF000) {
+        // ROM bank 0
+        // MBC1: Turn external RAM on
+        case 0x0000:
+        case 0x1000:
+            switch (cart_type) {
+            case 1:
+                MBC.ram_on = ((val & 0xF) == 0xA) ? 1 : 0;
+                break;
+            }
+            break;
+
+        // MBC1: ROM bank switch
+        case 0x2000:
+        case 0x3000:
+            switch (cart_type) {
+            case 1:
+                MBC.rom_bank &= 0x60;
+                val &= 0x1F;
+                if (val == 0)
+                    val = 1;
+                MBC.rom_bank |= val;
+                rom_offset = MBC.rom_bank * 0x4000;
+                break;
+            }
+            break;
+
+        // ROM bank 1
+        // MBC1: RAM bank switch
+        case 0x4000:
+        case 0x5000:
+            switch (cart_type) {
+            case 1:
+                if (MBC.mode != 0) {
+                    MBC.ram_bank = (val & 3);
+                    ram_offset = MBC.ram_bank * 0x2000;
+                } else {
+                    MBC.rom_bank &= 0x1F;
+                    MBC.rom_bank |= ((val & 3) << 5);
+                    rom_offset = MBC.rom_bank * 0x4000;
+                }
+            }
+            break;
+
+        case 0x6000:
+        case 0x7000:
+            switch (cart_type) {
+            case 1:
+                MBC.mode = val & 1;
+                break;
+            }
+            break;
+
+        // VRAM
+        case 0x8000:
+        case 0x9000:
+            gpu.vram[addr & 0x1FFF] = val;
+            gpu.updateTile(addr & 0x1FFF, val);
+            break;
+
+        // External RAM
+        case 0xA000:
+        case 0xB000:
+            eram[ram_offset + (addr & 0x1FFF)] = val;
+            break;
+
+        // Work RAM and echo
+        case 0xC000:
+        case 0xD000:
+        case 0xE000:
+            wram[addr & 0x1FFF] = val;
+            break;
+
+        // Everything else
+        case 0xF000:
+            switch (addr & 0x0F00) {
+            // Echo RAM
+            case 0x000:
+            case 0x100:
+            case 0x200:
+            case 0x300:
+            case 0x400:
+            case 0x500:
+            case 0x600:
+            case 0x700:
+            case 0x800:
+            case 0x900:
+            case 0xA00:
+            case 0xB00:
+            case 0xC00:
+            case 0xD00:
+                wram[addr & 0x1FFF] = val;
+                break;
+
+            // OAM
+            case 0xE00:
+                if ((addr & 0xFF) < 0xA0)
+                    gpu.oam[addr & 0xFF] = val;
+                gpu.updateOAM(addr, val);
+                break;
+
+            // Zeropage RAM, I/O, interrupts
+            case 0xF00:
+                if (addr == 0xFFFF) {
+                    ie = val;
+                } else if (addr > 0xFF7F) {
+                    zram[addr & 0x7F] = val;
+                } else
+                    switch (addr & 0xF0) {
+                    case 0x00:
+                        switch (addr & 0xF) {
+                        case 0:
+                            key.wb(val);
+                            break;
+                        case 4:
+                        case 5:
+                        case 6:
+                        case 7:
+                            timer.wb(addr, val);
+                            break;
+                        case 15:
+                            _if = val;
+                            break;
+                        }
+                        break;
+
+                    case 0x10:
+                    case 0x20:
+                    case 0x30:
+                        break;
+
+                    case 0x40:
+                    case 0x50:
+                    case 0x60:
+                    case 0x70:
+                        gpu.wb(addr, val);
+                        break;
+                    }
+            }
+            break;
+        }
+    }
+
+    public void ww(int addr, int val) {
+        wb(addr, val & 255);
+        wb(addr + 1, val >> 8);
     }
 }
