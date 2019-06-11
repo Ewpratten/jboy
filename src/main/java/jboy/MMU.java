@@ -52,6 +52,20 @@ public class MMU {
         this.key = key;
     }
 
+    public void setZ80(Z80 z80) {
+        this.z80 = z80;
+    }
+
+    public void setGPU(GPU gpu) {
+        this.gpu = gpu;
+    }
+    public void setTimer(Timer timer) {
+        this.timer = timer;
+    }
+    public void setKEY(KEY key) {
+        this.key = key;
+    }
+
     public void reset() {
         /* Reset RAM */
         for (int i = 0; i < 32768; i++) {

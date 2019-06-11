@@ -3,12 +3,87 @@
  */
 package jboy;
 
+import java.io.File;
+
 public class App {
-    public String getGreeting() {
-        return "Hello world.";
-    }
+    Z80 z80;
+    GPU gpu;
+    MMU mmu;
+    Timer timer;
+    KEY key;
 
     public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
+        if (args.length != 1) {
+            System.out.println("Inproper usage. Pass a ROM filename as the only argument");
+            return;
+        }
+        new App(args[0]);
+    }
+
+    public App(String rom_file) {
+        /* Load all components */
+        z80 = new Z80(mmu);
+        gpu = new GPU(z80, mmu);
+        mmu = new MMU(z80, gpu, timer, key);
+        timer = new Timer();
+        key = new KEY();
+
+        // Set
+        mmu.setZ80(z80);
+        mmu.setGPU(gpu);
+        mmu.setTimer(timer);
+        mmu.setKEY(key);
+
+        gpu.setMMU(mmu);
+        gpu.setZ80(z80);
+
+        z80.setMMU(mmu);
+
+        // reset
+        gpu.reset();
+        mmu.reset();
+        z80.reset();
+
+        mmu.load(new File(rom_file));
+
+        /* Main loop */
+        int fclock = z80.clock.m + 17556;
+        do {
+            if (z80.halt)
+                z80.r.m = 1;
+            else {
+                // z80._r.r = (z80._r.r+1) & 127;
+                z80.exec(mmu.rb(z80.r.pc++));
+                z80.r.pc &= 65535;
+            }
+            if (z80.r.ime != 0 && mmu.ie != 0 && mmu._if != 0) {
+                z80.halt = false;
+                z80.r.ime = 0;
+                int ifired = mmu.ie & mmu._if;
+                if ((ifired & 1) != 0) {
+                    mmu._if &= 0xFE;
+                    z80.ops.RST40();
+                } else if ((ifired & 2) != 0) {
+                    mmu._if &= 0xFD;
+                    z80.ops.RST48();
+                } else if ((ifired & 4) != 0) {
+                    mmu._if &= 0xFB;
+                    z80.ops.RST50();
+                } else if ((ifired & 8) != 0) {
+                    mmu._if &= 0xF7;
+                    z80.ops.RST58();
+                } else if ((ifired & 16) != 0) {
+                    mmu._if &= 0xEF;
+                    z80.ops.RST60();
+                } else {
+                    z80.r.ime = 1;
+                }
+            }
+            // jsGB.dbgtrace();
+            z80.clock.m += z80.r.m;
+            gpu.checkLine();
+            timer.inc(z80, mmu);
+            
+        } while (z80.clock.m < fclock);
     }
 }
