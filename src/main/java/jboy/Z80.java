@@ -302,7 +302,7 @@ public class Z80{
         () { r.h++; r.h&=255; r.f=(r.h != 0)?0:0x80; r.m=1; } public void INCr_l
         () { r.l++; r.l&=255; r.f=(r.l != 0)?0:0x80; r.m=1; } public void INCr_a
         () { r.a++; r.a&=255; r.f=(r.a != 0)?0:0x80; r.m=1; } public void INCHLm
-        () { int i=mmu.rb((r.h<<8)+r.l)+1; i&=255; mmu.wb((r.h<<8)+r.l,i); r.f=i?0:0x80; r.m=3; }
+        () { int i=mmu.rb((r.h<<8)+r.l)+1; i&=255; mmu.wb((r.h<<8)+r.l,i); r.f=(i != 0)?0:0x80; r.m=3; }
 
         public void DECr_b
         () { r.b--; r.b&=255; r.f=(r.b != 0)?0:0x80; r.m=1; } public void DECr_c
@@ -312,7 +312,7 @@ public class Z80{
         () { r.h--; r.h&=255; r.f=(r.h != 0)?0:0x80; r.m=1; } public void DECr_l
         () { r.l--; r.l&=255; r.f=(r.l != 0)?0:0x80; r.m=1; } public void DECr_a
         () { r.a--; r.a&=255; r.f=(r.a != 0)?0:0x80; r.m=1; } public void DECHLm
-        () { int i=mmu.rb((r.h<<8)+r.l)-1; i&=255; mmu.wb((r.h<<8)+r.l,i); r.f=i?0:0x80; r.m=3; }
+        () { int i=mmu.rb((r.h<<8)+r.l)-1; i&=255; mmu.wb((r.h<<8)+r.l,i); r.f=(i != 0)?0:0x80; r.m=3; }
 
         public void INCBC
         () { r.c=(r.c+1)&255; if(r.c != 0) r.b=(r.b+1)&255; r.m=1; } public void INCDE
@@ -328,14 +328,14 @@ public class Z80{
 
         /*--- Bit manipulation ---*/
         public void BIT0b
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.b&0x01)?0:0x80; r.m=2; } public void BIT0c
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.c&0x01)?0:0x80; r.m=2; } public void BIT0d
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.d&0x01)?0:0x80; r.m=2; } public void BIT0e
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.e&0x01)?0:0x80; r.m=2; } public void BIT0h
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.h&0x01)?0:0x80; r.m=2; } public void BIT0l
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.l&0x01)?0:0x80; r.m=2; } public void BIT0a
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.a&0x01)?0:0x80; r.m=2; } public void BIT0m
-        () { r.f&=0x1F; r.f|=0x20; r.f=(mmu.rb((r.h<<8)+r.l)&0x01)?0:0x80; r.m=3; }
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.b&0x01) != 0)?0:0x80; r.m=2; } public void BIT0c
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.c&0x01) != 0)?0:0x80; r.m=2; } public void BIT0d
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.d&0x01) != 0)?0:0x80; r.m=2; } public void BIT0e
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.e&0x01) != 0)?0:0x80; r.m=2; } public void BIT0h
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.h&0x01) != 0)?0:0x80; r.m=2; } public void BIT0l
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.l&0x01) != 0)?0:0x80; r.m=2; } public void BIT0a
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.a&0x01) != 0)?0:0x80; r.m=2; } public void BIT0m
+        () { r.f&=0x1F; r.f|=0x20; r.f=((mmu.rb((r.h<<8)+r.l)&0x01) != 0)?0:0x80; r.m=3; }
 
         public void RES0b
         () { r.b&=0xFE; r.m=2; } public void RES0c
@@ -358,14 +358,14 @@ public class Z80{
         () { int i=mmu.rb((r.h<<8)+r.l); i|=0x01; mmu.wb((r.h<<8)+r.l,i); r.m=4; }
 
         public void BIT1b
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.b&0x02)?0:0x80; r.m=2; } public void BIT1c
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.c&0x02)?0:0x80; r.m=2; } public void BIT1d
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.d&0x02)?0:0x80; r.m=2; } public void BIT1e
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.e&0x02)?0:0x80; r.m=2; } public void BIT1h
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.h&0x02)?0:0x80; r.m=2; } public void BIT1l
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.l&0x02)?0:0x80; r.m=2; } public void BIT1a
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.a&0x02)?0:0x80; r.m=2; } public void BIT1m
-        () { r.f&=0x1F; r.f|=0x20; r.f=(mmu.rb((r.h<<8)+r.l)&0x02)?0:0x80; r.m=3; }
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.b&0x02) != 0)?0:0x80; r.m=2; } public void BIT1c
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.c&0x02) != 0)?0:0x80; r.m=2; } public void BIT1d
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.d&0x02) != 0)?0:0x80; r.m=2; } public void BIT1e
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.e&0x02) != 0)?0:0x80; r.m=2; } public void BIT1h
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.h&0x02) != 0)?0:0x80; r.m=2; } public void BIT1l
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.l&0x02) != 0)?0:0x80; r.m=2; } public void BIT1a
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.a&0x02) != 0)?0:0x80; r.m=2; } public void BIT1m
+        () { r.f&=0x1F; r.f|=0x20; r.f=((mmu.rb((r.h<<8)+r.l)&0x02) != 0)?0:0x80; r.m=3; }
 
         public void RES1b
         () { r.b&=0xFD; r.m=2; } public void RES1c
@@ -388,14 +388,14 @@ public class Z80{
         () { int i=mmu.rb((r.h<<8)+r.l); i|=0x02; mmu.wb((r.h<<8)+r.l,i); r.m=4; }
 
         public void BIT2b
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.b&0x04)?0:0x80; r.m=2; } public void BIT2c
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.c&0x04)?0:0x80; r.m=2; } public void BIT2d
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.d&0x04)?0:0x80; r.m=2; } public void BIT2e
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.e&0x04)?0:0x80; r.m=2; } public void BIT2h
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.h&0x04)?0:0x80; r.m=2; } public void BIT2l
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.l&0x04)?0:0x80; r.m=2; } public void BIT2a
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.a&0x04)?0:0x80; r.m=2; } public void BIT2m
-        () { r.f&=0x1F; r.f|=0x20; r.f=(mmu.rb((r.h<<8)+r.l)&0x04)?0:0x80; r.m=3; }
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.b&0x04) != 0)?0:0x80; r.m=2; } public void BIT2c
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.c&0x04) != 0)?0:0x80; r.m=2; } public void BIT2d
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.d&0x04) != 0)?0:0x80; r.m=2; } public void BIT2e
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.e&0x04) != 0)?0:0x80; r.m=2; } public void BIT2h
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.h&0x04) != 0)?0:0x80; r.m=2; } public void BIT2l
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.l&0x04) != 0)?0:0x80; r.m=2; } public void BIT2a
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.a&0x04) != 0)?0:0x80; r.m=2; } public void BIT2m
+        () { r.f&=0x1F; r.f|=0x20; r.f=((mmu.rb((r.h<<8)+r.l)&0x04) != 0)?0:0x80; r.m=3; }
 
         public void RES2b
         () { r.b&=0xFB; r.m=2; } public void RES2c
@@ -418,14 +418,14 @@ public class Z80{
         () { int i=mmu.rb((r.h<<8)+r.l); i|=0x04; mmu.wb((r.h<<8)+r.l,i); r.m=4; }
 
         public void  BIT3b
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.b&0x08)?0:0x80; r.m=2; } public void BIT3c
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.c&0x08)?0:0x80; r.m=2; } public void BIT3d
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.d&0x08)?0:0x80; r.m=2; } public void BIT3e
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.e&0x08)?0:0x80; r.m=2; } public void BIT3h
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.h&0x08)?0:0x80; r.m=2; } public void BIT3l
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.l&0x08)?0:0x80; r.m=2; } public void BIT3a
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.a&0x08)?0:0x80; r.m=2; } public void BIT3m
-        () { r.f&=0x1F; r.f|=0x20; r.f=(mmu.rb((r.h<<8)+r.l)&0x08)?0:0x80; r.m=3; }
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.b&0x08) != 0)?0:0x80; r.m=2; } public void BIT3c
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.c&0x08) != 0)?0:0x80; r.m=2; } public void BIT3d
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.d&0x08) != 0)?0:0x80; r.m=2; } public void BIT3e
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.e&0x08) != 0)?0:0x80; r.m=2; } public void BIT3h
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.h&0x08) != 0)?0:0x80; r.m=2; } public void BIT3l
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.l&0x08) != 0)?0:0x80; r.m=2; } public void BIT3a
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.a&0x08) != 0)?0:0x80; r.m=2; } public void BIT3m
+        () { r.f&=0x1F; r.f|=0x20; r.f=((mmu.rb((r.h<<8)+r.l)&0x08) != 0)?0:0x80; r.m=3; }
 
         public void RES3b
         () { r.b&=0xF7; r.m=2; } public void RES3c
@@ -448,14 +448,14 @@ public class Z80{
         () { int i=mmu.rb((r.h<<8)+r.l); i|=0x08; mmu.wb((r.h<<8)+r.l,i); r.m=4; }
 
         public void BIT4b
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.b&0x10)?0:0x80; r.m=2; } public void BIT4c
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.c&0x10)?0:0x80; r.m=2; } public void BIT4d
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.d&0x10)?0:0x80; r.m=2; } public void BIT4e
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.e&0x10)?0:0x80; r.m=2; } public void BIT4h
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.h&0x10)?0:0x80; r.m=2; } public void BIT4l
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.l&0x10)?0:0x80; r.m=2; } public void BIT4a
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.a&0x10)?0:0x80; r.m=2; } public void BIT4m
-        () { r.f&=0x1F; r.f|=0x20; r.f=(mmu.rb((r.h<<8)+r.l)&0x10)?0:0x80; r.m=3; }
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.b&0x10) != 0)?0:0x80; r.m=2; } public void BIT4c
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.c&0x10) != 0)?0:0x80; r.m=2; } public void BIT4d
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.d&0x10) != 0)?0:0x80; r.m=2; } public void BIT4e
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.e&0x10) != 0)?0:0x80; r.m=2; } public void BIT4h
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.h&0x10) != 0)?0:0x80; r.m=2; } public void BIT4l
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.l&0x10) != 0)?0:0x80; r.m=2; } public void BIT4a
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.a&0x10) != 0)?0:0x80; r.m=2; } public void BIT4m
+        () { r.f&=0x1F; r.f|=0x20; r.f=((mmu.rb((r.h<<8)+r.l)&0x10) != 0)?0:0x80; r.m=3; }
 
         public void RES4b
         () { r.b&=0xEF; r.m=2; } public void RES4c
@@ -478,14 +478,14 @@ public class Z80{
         () { int i=mmu.rb((r.h<<8)+r.l); i|=0x10; mmu.wb((r.h<<8)+r.l,i); r.m=4; }
 
         public void BIT5b
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.b&0x20)?0:0x80; r.m=2; } public void BIT5c
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.c&0x20)?0:0x80; r.m=2; } public void BIT5d
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.d&0x20)?0:0x80; r.m=2; } public void BIT5e
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.e&0x20)?0:0x80; r.m=2; } public void BIT5h
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.h&0x20)?0:0x80; r.m=2; } public void BIT5l
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.l&0x20)?0:0x80; r.m=2; } public void BIT5a
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.a&0x20)?0:0x80; r.m=2; } public void BIT5m
-        () { r.f&=0x1F; r.f|=0x20; r.f=(mmu.rb((r.h<<8)+r.l)&0x20)?0:0x80; r.m=3; }
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.b&0x20) != 0)?0:0x80; r.m=2; } public void BIT5c
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.c&0x20) != 0)?0:0x80; r.m=2; } public void BIT5d
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.d&0x20) != 0)?0:0x80; r.m=2; } public void BIT5e
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.e&0x20) != 0)?0:0x80; r.m=2; } public void BIT5h
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.h&0x20) != 0)?0:0x80; r.m=2; } public void BIT5l
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.l&0x20) != 0)?0:0x80; r.m=2; } public void BIT5a
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.a&0x20) != 0)?0:0x80; r.m=2; } public void BIT5m
+        () { r.f&=0x1F; r.f|=0x20; r.f=((mmu.rb((r.h<<8)+r.l)&0x20) != 0)?0:0x80; r.m=3; }
 
         public void RES5b
         () { r.b&=0xDF; r.m=2; } public void RES5c
@@ -508,14 +508,14 @@ public class Z80{
         () { int i=mmu.rb((r.h<<8)+r.l); i|=0x20; mmu.wb((r.h<<8)+r.l,i); r.m=4; }
 
         public void BIT6b
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.b&0x40)?0:0x80; r.m=2; } public void BIT6c
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.c&0x40)?0:0x80; r.m=2; } public void BIT6d
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.d&0x40)?0:0x80; r.m=2; } public void BIT6e
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.e&0x40)?0:0x80; r.m=2; } public void BIT6h
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.h&0x40)?0:0x80; r.m=2; } public void BIT6l
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.l&0x40)?0:0x80; r.m=2; } public void BIT6a
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.a&0x40)?0:0x80; r.m=2; } public void BIT6m
-        () { r.f&=0x1F; r.f|=0x20; r.f=(mmu.rb((r.h<<8)+r.l)&0x40)?0:0x80; r.m=3; }
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.b&0x40) != 0)?0:0x80; r.m=2; } public void BIT6c
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.c&0x40) != 0)?0:0x80; r.m=2; } public void BIT6d
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.d&0x40) != 0)?0:0x80; r.m=2; } public void BIT6e
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.e&0x40) != 0)?0:0x80; r.m=2; } public void BIT6h
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.h&0x40) != 0)?0:0x80; r.m=2; } public void BIT6l
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.l&0x40) != 0)?0:0x80; r.m=2; } public void BIT6a
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.a&0x40) != 0)?0:0x80; r.m=2; } public void BIT6m
+        () { r.f&=0x1F; r.f|=0x20; r.f=((mmu.rb((r.h<<8)+r.l)&0x40) != 0)?0:0x80; r.m=3; }
 
         public void RES6b
         () { r.b&=0xBF; r.m=2; } public void RES6c
@@ -538,14 +538,14 @@ public class Z80{
         () { int i=mmu.rb((r.h<<8)+r.l); i|=0x40; mmu.wb((r.h<<8)+r.l,i); r.m=4; }
 
         public void BIT7b
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.b&0x80)?0:0x80; r.m=2; } public void BIT7c
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.c&0x80)?0:0x80; r.m=2; } public void BIT7d
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.d&0x80)?0:0x80; r.m=2; } public void BIT7e
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.e&0x80)?0:0x80; r.m=2; } public void BIT7h
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.h&0x80)?0:0x80; r.m=2; } public void BIT7l
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.l&0x80)?0:0x80; r.m=2; } public void BIT7a
-        () { r.f&=0x1F; r.f|=0x20; r.f=(r.a&0x80)?0:0x80; r.m=2; } public void BIT7m
-        () { r.f&=0x1F; r.f|=0x20; r.f=(mmu.rb((r.h<<8)+r.l)&0x80)?0:0x80; r.m=3; }
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.b&0x80) != 0)?0:0x80; r.m=2; } public void BIT7c
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.c&0x80) != 0)?0:0x80; r.m=2; } public void BIT7d
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.d&0x80) != 0)?0:0x80; r.m=2; } public void BIT7e
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.e&0x80) != 0)?0:0x80; r.m=2; } public void BIT7h
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.h&0x80) != 0)?0:0x80; r.m=2; } public void BIT7l
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.l&0x80) != 0)?0:0x80; r.m=2; } public void BIT7a
+        () { r.f&=0x1F; r.f|=0x20; r.f=((r.a&0x80) != 0)?0:0x80; r.m=2; } public void BIT7m
+        () { r.f&=0x1F; r.f|=0x20; r.f=((mmu.rb((r.h<<8)+r.l)&0x80) != 0)?0:0x80; r.m=3; }
 
         public void RES7b
         () { r.b&=0x7F; r.m=2; } public void RES7c
