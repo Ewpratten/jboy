@@ -77,10 +77,10 @@ public class Timer {
         return 0;
     }
 
-    public int wb(int addr, int val) {
+    public void wb(int addr, int val) {
         switch (addr) {
         case 0xFF04:
-            div = val;
+            div = 0;
             break;
         case 0xFF05:
             tima = val;
@@ -89,10 +89,8 @@ public class Timer {
             tma = val;
             break;
         case 0xFF07:
-            tac = val;
+            tac = val&7;
             break;
         }
-
-        return 0;
     }
 }
