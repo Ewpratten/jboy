@@ -82,6 +82,7 @@ public class MMU {
 
         /* Reset states */
         in_bios = true;
+        // in_bios = false;
         ie = 0;
         _if = 0;
 
@@ -107,12 +108,14 @@ public class MMU {
     }
 
     public int rb(int addr) {
+        // System.out.println(in_bios);
         switch (addr & 0xf000) {
         case 0:
             if (in_bios) {
+                System.out.println(addr);
                 if (addr < 0x100) {
                     return bios[addr];
-                } else if (z80.getRegisters().pc == 0x0100) {
+                } else {//if (z80.r.pc == 0x0100) {
                     in_bios = false;
                     System.out.println("Exiting BIOS");
                 }

@@ -5,7 +5,9 @@ import java.awt.Color;
 import PicoEngine.Window;
 
 public class GPU {
-    Window win = new Window(160, 144, 1, 1, "jBoy");
+
+    final int pixel_size = 4;
+    Window win = new Window(160 * pixel_size, 144 * pixel_size, 1, 1, "jBoy");
 
     public int[] vram = new int[8192];
     public int[] oam = new int[160];
@@ -137,7 +139,7 @@ public class GPU {
     }
 
     public void checkLine() {
-        modeclocks += z80.getRegisters().m;
+        modeclocks += z80.r.m;
         switch (linemode) {
         // In hblank
         case 0:
@@ -457,11 +459,18 @@ public class GPU {
     }
 
     public void draw(int[][] screen) {
-        int i = 0;
-        for (int[] pixel : screen) {
-            win.setColor(new Color(pixel[3], pixel[3], pixel[3]));
-            win.line(i % 160, (int) (i / 144), i % 160, (int) (i / 144));
-            i += 1;
+        synchronized (win) {
+            win.clear();
+            int i = 0;
+            for (int[] pixel : screen) {
+                win.setColor(new Color(pixel[3], pixel[3], pixel[3]));
+                win.rect((i % 160) * pixel_size, (int) (i / 144) * pixel_size, pixel_size, pixel_size, true);
+                i += 1;
+            }
         }
+    }
+
+    public void sleep(int ms){
+        win.sleep(ms);
     }
 }
