@@ -11,7 +11,7 @@ public class GPU {
 
     public int[] vram = new int[8192];
     public int[] oam = new int[160];
-    public int[] reg = new int[256];
+    public int[] reg = new int[25600];
     public int[][][] tilemap = new int[512][8][8];
 
     int curline = 0;
@@ -463,10 +463,14 @@ public class GPU {
             win.clear();
             int i = 0;
             for (int[] pixel : screen) {
-                win.setColor(new Color(pixel[3], pixel[3], pixel[3]));
-                win.rect((i % 160) * pixel_size, (int) (i / 144) * pixel_size, pixel_size, pixel_size, true);
+                win.setColor(new Color(0,0, pixel[3]));
+                win.rect((i % 144) * pixel_size, (int) (i / 160) * pixel_size, pixel_size, pixel_size, true);
                 i += 1;
             }
+
+            // for (int[] x : screen) {
+            //     System.out.print(x[3]);
+            // }
         }
     }
 

@@ -40,94 +40,136 @@ public class App {
         z80.setMMU(mmu);
 
         // reset
+        z80.r.pc = 0x100;
+        mmu.in_bios = false;
+        z80.r.sp = 0xFFFE;
+        // z80.r.hl = 0x014D;
+        z80.r.c = 0x13;
+        z80.r.e = 0xD8;
+        z80.r.a = 1;
+
+        mmu.load(new File(rom_file));
         gpu.reset();
         mmu.reset();
         z80.reset();
 
-        mmu.load(new File(rom_file));
-
         /* Main loop */
-        // int fclock = z80.clock.m + 17556;
-        // do {
-        // // gpu.sleep(1);
-        // if (z80.halt)
-        // z80.r.m = 1;
-        // else {
-        // // z80._r.r = (z80._r.r+1) & 127;
-        // z80.exec(mmu.rb(z80.r.pc++));
-        // z80.r.pc &= 65535;
-        // }
-        // if (z80.r.ime != 0 && mmu.ie != 0 && mmu._if != 0) {
-        // z80.halt = false;
-        // z80.r.ime = 0;
-        // int ifired = mmu.ie & mmu._if;
-        // if ((ifired & 1) != 0) {
-        // mmu._if &= 0xFE;
-        // z80.ops.RST40();
-        // } else if ((ifired & 2) != 0) {
-        // mmu._if &= 0xFD;
-        // z80.ops.RST48();
-        // } else if ((ifired & 4) != 0) {
-        // mmu._if &= 0xFB;
-        // z80.ops.RST50();
-        // } else if ((ifired & 8) != 0) {
-        // mmu._if &= 0xF7;
-        // z80.ops.RST58();
-        // } else if ((ifired & 16) != 0) {
-        // mmu._if &= 0xEF;
-        // z80.ops.RST60();
-        // } else {
-        // z80.r.ime = 1;
-        // }
-        // }
-        // // jsGB.dbgtrace();
-        // z80.clock.m += z80.r.m;
-        // gpu.checkLine();
-        // timer.inc(z80, mmu);
+        int fclock = z80.clock.m + 17556;
+        do {
+            // gpu.sleep(1);
+            if (z80.halt)
+                z80.r.m = 1;
+            else {
+                // z80.r.r = (z80.r.r+1) & 127;
+                // z80.exec(mmu.rb(z80.r.pc++));
 
-        // } while (z80.clock.m < fclock);
+                int instruction = (mmu.rb(z80.r.pc++) & 0xff);
 
-        while (true) {
+                // int instruction = in.intValue();
+                if (instruction >= z80.map.length) {
+                    System.out.println("Unknown instruction: " + instruction);
+                } else {
+                    try {
+                        z80.ops.getClass().getMethod(z80.map[instruction]).invoke(z80.ops);
+                    } catch (Exception e) {
+                        // TODO: handle exception
+                        if (instruction > 0) {
+                            System.out.println("Failed to execute instruction: " + z80.map[instruction] + " ("
+                                    + instruction + ")");
+                        } else {
+                            System.out.println("Somehow, a negitive value was executed... " + instruction);
+                        }
+                        e.printStackTrace();
+                        // System.out.println(e);
+                    }
+                }
+
+                // System.out.println(instruction + z80.map[instruction]);
+                z80.r.pc &= 65535;
+            }
             if (z80.r.ime != 0 && mmu.ie != 0 && mmu._if != 0) {
                 z80.halt = false;
                 z80.r.ime = 0;
-                if ((mmu.ie & 1) != 0 && (mmu._if & 1) != 0) {
+                int ifired = mmu.ie & mmu._if;
+                if ((ifired & 1) != 0) {
                     mmu._if &= 0xFE;
                     z80.ops.RST40();
-                }
-            } else {
-                if (z80.halt) {
-                    z80.r.m = 1;
+                } else if ((ifired & 2) != 0) {
+                    mmu._if &= 0xFD;
+                    z80.ops.RST48();
+                } else if ((ifired & 4) != 0) {
+                    mmu._if &= 0xFB;
+                    z80.ops.RST50();
+                } else if ((ifired & 8) != 0) {
+                    mmu._if &= 0xF7;
+                    z80.ops.RST58();
+                } else if ((ifired & 16) != 0) {
+                    mmu._if &= 0xEF;
+                    z80.ops.RST60();
                 } else {
-                    z80.r.r = (z80.r.r + 1) & 127;
-                    // z80.map[MMU.rb(Z80._r.pc++)]();
-
-                    int instruction = (mmu.rb(z80.r.pc++) & 0xff);
-                    
-                    // int instruction = in.intValue();
-                    if (instruction >= z80.map.length) {
-                        System.out.println("Unknown instruction: " + instruction);
-                    } else {
-                        try {
-                            z80.ops.getClass().getMethod(z80.map[instruction]).invoke(z80.ops);
-                        } catch (Exception e) {
-                            // TODO: handle exception
-                            if (instruction > 0) {
-                                System.out.println("Failed to execute instruction: " + z80.map[instruction] + " ("
-                                        + instruction + ")");
-                            } else {
-                                System.out.println("Somehow, a negitive value was executed... "+ instruction);
-                            }
-                            System.out.println(e);
-                        }
-                    }
-
-                    z80.r.pc &= 65535;
+                    z80.r.ime = 1;
                 }
             }
+            // jsGB.dbgtrace();
             z80.clock.m += z80.r.m;
-            z80.clock.t += (z80.r.m * 4);
             gpu.checkLine();
-        }
+            timer.inc(z80, mmu);
+
+        } while (z80.clock.m < fclock);
+
+        // while (true) {
+        // if (z80.r.ime != 0 && mmu.ie != 0 && mmu._if != 0) {
+        // z80.halt = false;
+        // z80.r.ime = 0;
+        // if ((mmu.ie & 1) != 0 && (mmu._if & 1) != 0) {
+        // mmu._if &= 0xFE;
+        // z80.ops.RST40();
+        // }
+        // } else {
+        // if (z80.halt) {
+        // z80.r.m = 1;
+        // } else {
+        // z80.r.r = (z80.r.r + 1) & 127;
+        // // z80.map[MMU.rb(Z80._r.pc++)]();
+
+        // z80.r.pc += 1;
+        // z80.r.pc &= 65535;
+
+        // // if (z80.r.pc >= z80.map.length) {
+        // // System.out.println("Hit max rom location");
+        // // } else {
+
+        // // System.out.println(z80.r.pc);
+
+        // int instruction = (mmu.rb(z80.r.pc) & 0xff);
+
+        // // int instruction = in.intValue();
+        // if (instruction >= z80.map.length) {
+        // System.out.println("Unknown instruction: " + instruction);
+        // } else {
+        // try {
+        // z80.ops.getClass().getMethod(z80.map[instruction]).invoke(z80.ops);
+        // } catch (Exception e) {
+        // // TODO: handle exception
+        // if (instruction > 0) {
+        // System.out.println("Failed to execute instruction: " + z80.map[instruction] +
+        // " ("
+        // + instruction + ")");
+        // } else {
+        // System.out.println("Somehow, a negitive value was executed... " +
+        // instruction);
+        // }
+        // e.printStackTrace();
+        // // System.out.println(e);
+        // }
+        // }
+
+        // z80.r.pc &= 65535;
+        // }
+        // }
+        // z80.clock.m += z80.r.m;
+        // z80.clock.t += (z80.r.m * 4);
+        // gpu.checkLine();
+        // }
     }
 }

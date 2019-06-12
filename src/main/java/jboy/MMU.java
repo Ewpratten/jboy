@@ -1,7 +1,10 @@
 package jboy;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class MMU {
     int[] bios = new int[] { 0x31, 0xFE, 0xFF, 0xAF, 0x21, 0xFF, 0x9F, 0x32, 0xCB, 0x7C, 0x20, 0xFB, 0x21, 0x26, 0xFF,
@@ -20,7 +23,7 @@ public class MMU {
             0x13, 0xBE, 0x20, 0xFE, 0x23, 0x7D, 0xFE, 0x34, 0x20, 0xF5, 0x06, 0x19, 0x78, 0x86, 0x23, 0x05, 0x20, 0xFB,
             0x86, 0x20, 0xFE, 0x3E, 0x01, 0xE0, 0x50 };
 
-    byte[] rom;
+    String rom;
     int cart_type = 0;
 
     static class MBC {
@@ -100,9 +103,19 @@ public class MMU {
     }
 
     public void load(File cart) {
+        // try {
+        //     rom = Files.readAllBytes(cart.toPath());
+        // } catch (Exception e) {
+        //     System.out.println("Invalid ROM. Loading nothing");
+        // }
+
         try {
-            rom = Files.readAllBytes(cart.toPath());
+            rom = new String(Files.readAllBytes(cart.toPath()));
+            cart_type = rom.charAt(0x0147);
+            System.out.println("Loaded "+ rom.length() + " bytes.");
+
         } catch (Exception e) {
+            //TODO: handle exception
             System.out.println("Invalid ROM. Loading nothing");
         }
     }
@@ -112,29 +125,29 @@ public class MMU {
         switch (addr & 0xf000) {
         case 0:
             if (in_bios) {
-                System.out.println(addr);
+                System.out.println(z80.r.pc);
                 if (addr < 0x100) {
                     return bios[addr];
-                } else {//if (z80.r.pc == 0x0100) {
+                } else if (z80.r.pc > 0x0100 ) {
                     in_bios = false;
                     System.out.println("Exiting BIOS");
                 }
 
             } else {
-                return rom[addr];
+                return rom.charAt(addr);
             }
 
         case 0x1000:
         case 0x2000:
         case 0x3000:
-            return rom[addr];
+            return rom.charAt(addr);
 
         // ROM bank 1
         case 0x4000:
         case 0x5000:
         case 0x6000:
         case 0x7000:
-            return rom[rom_offset + (addr & 0x3fff)];
+            return rom.charAt(rom_offset + (addr & 0x3fff));
 
         // VRAM
         case 0x8000:
